@@ -1,6 +1,10 @@
 # TODO:
 # - add devel subpackage
+
+%bcond_without	ipv6		# disable IPv6 support
+
 %include	/usr/lib/rpm/macros.perl
+%define		mod_name	perl
 %define 	apxs	/usr/sbin/apxs1
 Summary:	A Perl interpreter for the Apache Web server
 Summary(cs):	Vestavìný interpret Perlu pro WWW server Apache
@@ -23,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	7
+Release:	7.3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -34,7 +38,7 @@ Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
 BuildRequires:	%{apxs}
-BuildRequires:	apache1(EAPI)-devel >= 1.3.29-4
+BuildRequires:	apache1-devel >= 1.3.33-2
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
 BuildRequires:	perl-Devel-Symdump
@@ -44,8 +48,9 @@ BuildRequires:	perl-URI
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
+%{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
 PreReq:		apache1(EAPI)
-Requires(post,preun):	%{apxs}
+Requires(triggerpostun):	%{apxs}
 %requires_eq	apache1
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	perl(mod_perl_hooks)
@@ -55,6 +60,8 @@ Obsoletes:	mod_perl-common
 Obsoletes:	perl-Apache-Test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_pkglibdir	%(%{apxs} -q LIBEXECDIR 2>/dev/null)
+%define		_sysconfdir	%(%{apxs} -q SYSCONFDIR 2>/dev/null)
 %define		_noautoreqdep	'perl(Apache::.*)' 'perl(mod_perl)'
 
 %description
@@ -190,7 +197,7 @@ Apache web ·þÎñ³ÌÐò£¬ ²¢Îª Apache µÄ C ÓïÑÔ API Ìá¹©ÃæÏò¶ÔÏóµÄ Perl
 %prep
 %setup  -q -n mod_perl-%{version}
 %patch0 -p1
-%patch1 -p1
+%{?with_ipv6:%patch1 -p1}
 %patch2 -p1
 
 %build
@@ -211,20 +218,28 @@ chmod +x apaci/find_source
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir}/apache1,/home/apache/manual/mod}
+install -d $RPM_BUILD_ROOT{%{_pkglibdir},%{_sysconfdir}/conf.d,/home/apache/manual/mod}
 
 %{__make} pure_install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install apaci/libperl.so $RPM_BUILD_ROOT%{_libdir}/apache1
+install apaci/libperl.so $RPM_BUILD_ROOT%{_pkglibdir}
 install htdocs/manual/mod/mod_perl.html \
 	$RPM_BUILD_ROOT/home/apache/manual/mod
+
+echo 'LoadModule %{mod_name}_module	modules/lib%{mod_name}.so' > \
+	$RPM_BUILD_ROOT%{_sysconfdir}/conf.d/90_mod_%{mod_name}.conf
+
+# clean known unpackaged files
+rm -f $RPM_BUILD_ROOT%{perl_vendorarch}/*.pod
+rm -f $RPM_BUILD_ROOT%{perl_vendorarch}/Bundle/Apache.pm
+rm -f $RPM_BUILD_ROOT%{perl_vendorarch}/auto/mod_%{mod_name}/.packlist
+rm -f $RPM_BUILD_ROOT%{_mandir}/man3/Bundle::Apache.3pm*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-%{apxs} -e -a -n perl %{_libexecdir}/libperl.so 1>&2
 if [ -f /var/lock/subsys/apache ]; then
 	/etc/rc.d/init.d/apache restart 1>&2
 else
@@ -233,10 +248,15 @@ fi
 
 %preun
 if [ "$1" = "0" ]; then
-	%{apxs} -e -A -n perl %{_libexecdir}/libperl.so 1>&2
 	if [ -f /var/lock/subsys/apache ]; then
 		/etc/rc.d/init.d/apache restart 1>&2
 	fi
+fi
+
+%triggerpostun -- apache1-mod_%{mod_name} < 1.29-7.1
+# check that they're not using old apache.conf
+if grep -q '^Include conf\.d' /etc/apache/apache.conf; then
+	%{apxs} -e -A -n %{mod_name} %{_pkglibdir}/lib%{mod_name}.so 1>&2
 fi
 
 %files
@@ -244,7 +264,8 @@ fi
 %doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
 %doc /home/apache/manual/mod/*html
 
-%attr(755,root,root) %{_libdir}/apache1/*.so
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
+%attr(755,root,root) %{_pkglibdir}/*
 
 %{perl_vendorarch}/*.pm
 %{perl_vendorarch}/*.PL
