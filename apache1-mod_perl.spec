@@ -1,7 +1,7 @@
 # TODO:
 # - add devel subpackage
 %include	/usr/lib/rpm/macros.perl
-%define 	apxs	/usr/sbin/apxs
+%define 	apxs	/usr/sbin/apxs1
 Summary:	A Perl interpreter for the Apache Web server
 Summary(cs):	Vestavìný interpret Perlu pro WWW server Apache
 Summary(da):	En indbygget Perl-fortolker for webtjeneren Apache
@@ -208,40 +208,40 @@ chmod +x apaci/find_source
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_libdir}/apache,/home/httpd/manual/mod}
+install -d $RPM_BUILD_ROOT{%{_libdir}/apache1,/home/apache/manual/mod}
 
 %{__make} pure_install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install apaci/libperl.so $RPM_BUILD_ROOT%{_libdir}/apache
+install apaci/libperl.so $RPM_BUILD_ROOT%{_libdir}/apache1
 install htdocs/manual/mod/mod_perl.html \
-	$RPM_BUILD_ROOT/home/httpd/manual/mod
+	$RPM_BUILD_ROOT/home/apache/manual/mod
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 %{apxs} -e -a -n perl %{_libexecdir}/libperl.so 1>&2
-if [ -f /var/lock/subsys/httpd ]; then
-	/etc/rc.d/init.d/httpd restart 1>&2
+if [ -f /var/lock/subsys/apache ]; then
+	/etc/rc.d/init.d/apache restart 1>&2
 else
-	echo "Run \"/etc/rc.d/init.d/httpd start\" to start apache http daemon."
+	echo "Run \"/etc/rc.d/init.d/apache start\" to start apache http daemon."
 fi
 
 %preun
 if [ "$1" = "0" ]; then
 	%{apxs} -e -A -n perl %{_libexecdir}/libperl.so 1>&2
-	if [ -f /var/lock/subsys/httpd ]; then
-		/etc/rc.d/init.d/httpd restart 1>&2
+	if [ -f /var/lock/subsys/apache ]; then
+		/etc/rc.d/init.d/apache restart 1>&2
 	fi
 fi
 
 %files
 %defattr(644,root,root,755)
 %doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
-%doc /home/httpd/manual/mod/*html
+%doc /home/apache/manual/mod/*html
 
-%attr(755,root,root) %{_libdir}/apache/*.so
+%attr(755,root,root) %{_libdir}/apache1/*.so
 
 %{perl_vendorarch}/*.pm
 %{perl_vendorarch}/*.PL
