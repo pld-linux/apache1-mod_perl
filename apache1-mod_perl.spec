@@ -34,7 +34,7 @@ Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
 BuildRequires:	%{apxs}
-BuildRequires:	apache(EAPI)-devel
+BuildRequires:	apache(EAPI)-devel >= 1.3.29-4
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
 BuildRequires:	perl-Devel-Symdump
