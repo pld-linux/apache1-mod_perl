@@ -31,18 +31,19 @@ Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
 Patch0:		apache-perl-rh.patch
 # from ftp://ftp.kddlabs.co.jp/Linux/packages/Kondara/pub/Jirai/
 Patch1:		mod_perl-v6.patch
+Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
+BuildRequires:	%{apxs}
 BuildRequires:	apache(EAPI)-devel
-BuildRequires:	perl >= 5.8.0
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
 BuildRequires:	perl-Devel-Symdump
 BuildRequires:	perl-HTML-Parser
 BuildRequires:	perl-MIME-Base64
 BuildRequires:	perl-URI
+BuildRequires:	perl-devel >= 5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
-BuildRequires:	%{apxs}
 PreReq:		apache(EAPI)
 Requires(post,preun):	%{apxs}
 Provides:	perl(mod_perl_hooks)
@@ -185,18 +186,22 @@ Apache web 服务程序， 并为 Apache 的 C 语言 API 提供面向对象的 Perl
 %setup  -q -n mod_perl-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
-perl Makefile.PL \
+%{__perl} Makefile.PL \
 	USE_APXS=1 \
 	WITH_APXS=%{apxs} \
 	EVERYTHING=1 \
 	PERL_STACKED_HANDLERS=1 \
+	OPTIMIZE="%{rpmcflags}" \
 	INSTALLDIRS=vendor
 
-(cd apaci; ln -s ../src/modules .; chmod +x find_source)
-%{__make}
+ln -s ../src/modules apaci/modules
+chmod +x apaci/find_source
 
+%{__make} \
+	OPTIMIZE="%{rpmcflags}"
 %{__make} -C faq
 
 %install
