@@ -27,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	7.3
+Release:	7.4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -246,7 +246,7 @@ else
 	echo "Run \"/etc/rc.d/init.d/apache start\" to start apache HTTP daemon."
 fi
 
-%preun
+%postun
 if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/apache ]; then
 		/etc/rc.d/init.d/apache restart 1>&2
