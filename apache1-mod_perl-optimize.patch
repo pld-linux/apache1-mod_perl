@@ -1,0 +1,55 @@
+diff -ur mod_perl-1.29.orig/Makefile.PL mod_perl-1.29/Makefile.PL
+--- mod_perl-1.29.orig/Makefile.PL	2003-11-21 14:50:04.000000000 +0000
++++ mod_perl-1.29/Makefile.PL	2003-11-21 15:32:07.000000000 +0000
+@@ -1420,16 +1420,16 @@
+ 	(cd ./apaci && $(MAKE) distclean)
+ 
+ apxs_libperl:
+-	(cd ./apaci && $(PERL5LIB) $(MAKE))
++	(cd ./apaci && $(PERL5LIB) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
+ 
+ apxs_install: apxs_libperl
+ 	(cd ./apaci && $(MAKE) install;)
+ 
+ apache_httpd: $(APACHE_SRC)/Makefile.tmpl
+-	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)";)
++	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)" OPTIMIZE="$(OPTIMIZE)";)
+ 
+ apaci_httpd: 
+-	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE))
++	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
+ 
+ apaci_install: 
+ 	(cd $(APACHE_ROOT) && $(MAKE) install)
+@@ -1448,7 +1448,7 @@
+ 	-e 's,^$(APACHE_SRC),,;' \
+ 	-e 'system "echo src$$_ >> MANIFEST";' \
+ 	-e '}' 
+-	$(MAKE) dist
++	$(MAKE) dist OPTIMIZE="$(OPTIMIZE)"
+ 	$(RM_RF) src/include/
+ 	$(RM) src/Makefile.config
+ 	$(MV) MANIFEST.orig MANIFEST
+diff -ur mod_perl-1.29.orig/apaci/Makefile.tmpl mod_perl-1.29/apaci/Makefile.tmpl
+--- mod_perl-1.29.orig/apaci/Makefile.tmpl	2001-02-11 15:33:12.000000000 +0000
++++ mod_perl-1.29/apaci/Makefile.tmpl	2003-11-21 15:23:36.000000000 +0000
+@@ -13,8 +13,8 @@
+ #   Reassemble mod_perl parameters
+ #   from Perl and Apache parameters
+ MP_CC=$(PERL_CC)
+-MP_CFLAGS=$(PERL_OPTIMIZE) -I$(PERL_INC) $(PERL_CCFLAGS) \
+-          $(PERL_DEFS) $(INCLUDES) $(AP_CFLAGS) $(CFLAGS)
++MP_CFLAGS=-I$(PERL_INC) $(PERL_CCFLAGS) \
++          $(PERL_DEFS) $(INCLUDES) $(AP_CFLAGS) $(CFLAGS) $(OPTIMIZE)
+ MP_CFLAGS_SHLIB=$(PERL_CCCDLFLAGS) $(MP_CFLAGS)
+ MP_LD=$(PERL_LD)
+ MP_LDFLAGS_SHLIB=$(PERL_LDDLFLAGS)
+@@ -99,7 +99,7 @@
+ depend:
+ 	cp Makefile.tmpl Makefile.tmpl.bak \
+ 	    && sed -ne '1,/^# DO NOT REMOVE/p' Makefile.tmpl > Makefile.new \
+-	    && gcc -MM $(INCLUDES) $(AP_CFLAGS) $(CFLAGS) *.c >> Makefile.new \
++	    && gcc -MM $(INCLUDES) $(AP_CFLAGS) $(CFLAGS) $(OPTIMIZE) *.c >> Makefile.new \
+ 	    && sed -e '1,$$s: $(INCDIR)/: $$(INCDIR)/:g' \
+ 	           -e '1,$$s: $(OSDIR)/: $$(OSDIR)/:g' Makefile.new \
+ 		> Makefile.tmpl \
