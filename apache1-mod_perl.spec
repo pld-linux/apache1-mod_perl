@@ -52,7 +52,10 @@ Provides:	perl(mod_perl_hooks)
 Provides:	mod_perl
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
+Obsoletes:	perl-Apache-Test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_noautoreqdep	'perl(Apache.*)'
 
 %description
 Mod_perl incorporates a Perl interpreter into the Apache web server,
