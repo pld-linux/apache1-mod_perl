@@ -23,7 +23,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	2
+Release:	3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -41,7 +41,7 @@ BuildRequires:	perl-Devel-Symdump
 BuildRequires:	perl-HTML-Parser
 BuildRequires:	perl-MIME-Base64
 BuildRequires:	perl-URI
-BuildRequires:	perl-devel >= 5.8.0
+BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
 PreReq:		apache1(EAPI)
