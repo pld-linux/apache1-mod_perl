@@ -22,12 +22,12 @@ Summary(sv):	En inbyggd Perl-interpretator för webbservern Apache
 Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
-Version:	1.27
-Release:	3
+Version:	1.29
+Release:	1
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
-# Source0-md5:	bd07f4f1065eb0d0a8d8004219357d8c
+# Source0-md5:	1491931790509b9af06fc037d02b0e7a
 Patch0:		apache-perl-rh.patch
 # from ftp://ftp.kddlabs.co.jp/Linux/packages/Kondara/pub/Jirai/
 Patch1:		mod_perl-v6.patch
@@ -197,14 +197,14 @@ perl Makefile.PL \
 (cd apaci; ln -s ../src/modules .; chmod +x find_source)
 %{__make}
 
-cd faq
-%{__make}
+%{__make} -C faq
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir}/apache,/home/httpd/manual/mod}
 
-%{__make} pure_install DESTDIR=$RPM_BUILD_ROOT
+%{__make} pure_install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 install apaci/libperl.so $RPM_BUILD_ROOT%{_libdir}/apache
 install htdocs/manual/mod/mod_perl.html \
@@ -228,7 +228,6 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/httpd restart 1>&2
 	fi
 fi
-
 
 %files
 %defattr(644,root,root,755)
