@@ -55,7 +55,7 @@ Obsoletes:	mod_perl-common
 Obsoletes:	perl-Apache-Test
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_noautoreqdep	'perl(Apache.*)'
+%define		_noautoreqdep	'perl(Apache::.*)' 'perl(mod_perl)'
 
 %description
 Mod_perl incorporates a Perl interpreter into the Apache web server,
