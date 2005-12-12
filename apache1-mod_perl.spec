@@ -38,6 +38,7 @@ Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
 BuildRequires:	%{apxs}
+#{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
 BuildRequires:	apache1-devel >= 1.3.33-2
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
@@ -48,8 +49,7 @@ BuildRequires:	perl-URI
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
-#{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
-PreReq:		apache1(EAPI)
+Requires:	apache1(EAPI)
 Requires(triggerpostun):	%{apxs}
 %requires_eq	apache1
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
@@ -264,7 +264,7 @@ fi
 %doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
 %doc /home/apache/manual/mod/*html
 
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
 %attr(755,root,root) %{_pkglibdir}/*
 
 %{perl_vendorarch}/*.pm
