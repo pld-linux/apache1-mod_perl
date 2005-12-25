@@ -27,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	9
+Release:	10
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -49,12 +49,13 @@ BuildRequires:	perl-URI
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
-Requires:	apache1(EAPI)
+%requires_eq_to	apache1 apache1-devel
 Requires(triggerpostun):	%{apxs}
-%requires_eq	apache1
+Requires:	apache1(EAPI)
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
-Provides:	perl(mod_perl_hooks)
+Provides:	apache(mod_perl)
 Provides:	mod_perl
+Provides:	perl(mod_perl_hooks)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
 Obsoletes:	perl-Apache-Test
