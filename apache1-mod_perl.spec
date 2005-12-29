@@ -1,8 +1,9 @@
 # TODO:
 # - add devel subpackage
-
-%bcond_without	ipv6		# disable IPv6 support
-
+# - orphaned dirs for %{_manualdocdir}/mod/*html
+#
+%bcond_without	ipv6		# disable IPv6 support. must match same bcond from apache1-devel
+#
 %include	/usr/lib/rpm/macros.perl
 %define		mod_name	perl
 %define 	apxs	/usr/sbin/apxs1
@@ -27,7 +28,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	10
+Release:	10.4
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -38,7 +39,7 @@ Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
 BuildRequires:	%{apxs}
-#{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
+%{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
 BuildRequires:	apache1-devel >= 1.3.33-2
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
@@ -54,16 +55,16 @@ Requires(triggerpostun):	%{apxs}
 Requires:	apache1(EAPI)
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	apache(mod_perl)
-Provides:	mod_perl
 Provides:	perl(mod_perl_hooks)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
-Obsoletes:	perl-Apache-Test
+%{!?with_ipv6:Conflicts:	apache1(ipv6)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_pkglibdir	%(%{apxs} -q LIBEXECDIR 2>/dev/null)
 %define		_sysconfdir	%(%{apxs} -q SYSCONFDIR 2>/dev/null)
 %define		_noautoreqdep	'perl(Apache::.*)' 'perl(mod_perl)'
+%define		_manualdocdir	%{_datadir}/apache1-manual
 
 %description
 Mod_perl incorporates a Perl interpreter into the Apache web server,
@@ -219,14 +220,14 @@ chmod +x apaci/find_source
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_pkglibdir},%{_sysconfdir}/conf.d,/home/apache/manual/mod}
+install -d $RPM_BUILD_ROOT{%{_pkglibdir},%{_sysconfdir}/conf.d,%{_manualdocdir}/mod}
 
 %{__make} pure_install \
 	DESTDIR=$RPM_BUILD_ROOT
 
 install apaci/libperl.so $RPM_BUILD_ROOT%{_pkglibdir}
 install htdocs/manual/mod/mod_perl.html \
-	$RPM_BUILD_ROOT/home/apache/manual/mod
+	$RPM_BUILD_ROOT%{_manualdocdir}/mod
 
 echo 'LoadModule %{mod_name}_module	modules/lib%{mod_name}.so' > \
 	$RPM_BUILD_ROOT%{_sysconfdir}/conf.d/90_mod_%{mod_name}.conf
@@ -263,7 +264,8 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
-%doc /home/apache/manual/mod/*html
+# FIXME: parent dirs not owned as the manualdocdir (via apache1-doc) is not in required
+%doc %{_manualdocdir}/mod/*html
 
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
 %attr(755,root,root) %{_pkglibdir}/*
