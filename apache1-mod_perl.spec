@@ -1,5 +1,4 @@
 # TODO:
-# - add devel subpackage
 # - orphaned dirs for %{_manualdocdir}/mod/*html
 #
 %bcond_without	ipv6		# disable IPv6 support. must match same bcond from apache1-devel
@@ -28,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒĞÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·şÎñ³ÌĞòµÄ Perl ½âÊÍ³ÌĞò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	10.4
+Release:	10.5
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -196,6 +195,16 @@ Apache web ·şÎñ³ÌĞò£¬ ²¢Îª Apache µÄ C ÓïÑÔ API Ìá¹©ÃæÏò¶ÔÏóµÄ Perl
 ½Ó¿Ú¡£ ÓÉÓÚ²»±ØÆô¶¯ÈÎºÎÍâ²¿ Perl ½âÊÍ³ÌĞò£¬Òò´Ë»áÊ¹ CGI
 ½Å±¾»Ø×ª¹ı³Ì¸üÎª¿ìËÙ¡£
 
+%package devel
+Summary:	Files needed for building XS modules that use mod_perl
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
+Requires:	apache1-devel
+
+%description devel
+The apache1-mod_perl-devel package contains the files needed for
+building XS modules that use mod_perl.
+
 %prep
 %setup  -q -n mod_perl-%{version}
 %patch0 -p1
@@ -285,7 +294,8 @@ fi
 
 %{_mandir}/man3/[Acm]*
 
-# to -devel ?
+%files devel
+%defattr(644,root,root,755)
 %{perl_vendorarch}/auto/Apache/typemap
 %{perl_vendorarch}/auto/Apache/mod_perl.exp
 %{perl_vendorarch}/auto/Apache/include
