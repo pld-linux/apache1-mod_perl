@@ -27,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	10.5
+Release:	10.6
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -50,7 +50,7 @@ BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
 %requires_eq_to	apache1 apache1-devel
-Requires(triggerpostun):	%{apxs}
+Requires(triggerpostun):	sed >= 4.0
 Requires:	apache1(EAPI)
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	apache(mod_perl)
@@ -267,7 +267,7 @@ fi
 %triggerpostun -- apache1-mod_%{mod_name} < 1.29-7.1
 # check that they're not using old apache.conf
 if grep -q '^Include conf\.d' /etc/apache/apache.conf; then
-	%{apxs} -e -A -n %{mod_name} %{_pkglibdir}/lib%{mod_name}.so 1>&2
+	sed -i -e '/^\(Add\|Load\)Module.*libperl\.\(so\|c\)/d' /etc/apache/apache.conf
 fi
 
 %files
