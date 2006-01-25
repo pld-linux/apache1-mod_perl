@@ -197,6 +197,7 @@ Apache web 服务程序， 并为 Apache 的 C 语言 API 提供面向对象的 Perl
 
 %package devel
 Summary:	Files needed for building XS modules that use mod_perl
+Summary(pl):	Pliki potrzebne do budowania modu丑w XS korzystaj眂ych z mod_perla
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	apache1-devel
@@ -204,6 +205,10 @@ Requires:	apache1-devel
 %description devel
 The apache1-mod_perl-devel package contains the files needed for
 building XS modules that use mod_perl.
+
+%description devel -l pl
+Ten pakiet zawiera pliki potrzebne do budowania modu丑w XS
+korzystaj眂ych z mod_perla.
 
 %prep
 %setup  -q -n mod_perl-%{version}
