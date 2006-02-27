@@ -54,7 +54,6 @@ Requires(triggerpostun):	sed >= 4.0
 Requires:	apache1(EAPI)
 Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	apache(mod_perl)
-Provides:	perl(mod_perl_hooks)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
 %{!?with_ipv6:Conflicts:	apache1(ipv6)}
