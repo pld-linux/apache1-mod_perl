@@ -49,6 +49,7 @@ BuildRequires:	perl-URI
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	perl-libwww
 BuildRequires:	rpm-perlprov >= 4.1-13
+BuildRequires:	rpmbuild(macros) >= 1.268
 %requires_eq_to	apache1 apache1-devel
 Requires(triggerpostun):	sed >= 4.0
 Requires:	apache1(EAPI)
@@ -255,17 +256,11 @@ rm -f $RPM_BUILD_ROOT%{_mandir}/man3/Bundle::Apache.3pm*
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ -f /var/lock/subsys/apache ]; then
-	/etc/rc.d/init.d/apache restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/apache start\" to start apache HTTP daemon."
-fi
+%service -q apache restart
 
 %postun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/apache ]; then
-		/etc/rc.d/init.d/apache restart 1>&2
-	fi
+	%service -q apache restart
 fi
 
 %triggerpostun -- apache1-mod_%{mod_name} < 1.29-7.1
