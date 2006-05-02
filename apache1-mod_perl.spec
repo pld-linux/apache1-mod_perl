@@ -27,7 +27,7 @@ Summary(uk):	íÏÄÕÌØ ×ÂÕÄÏ×Õ×ÁÎÎÑ ¦ÎÔÅÒÐÒÅÔÁÔÏÒÁ Perl × ÓÅÒ×ÅÒ Apache
 Summary(zh_CN):	ÓÃÓÚ Apache web ·þÎñ³ÌÐòµÄ Perl ½âÊÍ³ÌÐò¡£
 Name:		apache1-mod_perl
 Version:	1.29
-Release:	12
+Release:	12.3
 License:	GPL
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -57,6 +57,8 @@ Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERS
 Provides:	apache(mod_perl)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
+# older apache1-mod_perl could make bad autodeps to perl-mod_perl1
+BuildConflicts:	apache1-mod_perl < 1.29-12.1
 %{!?with_ipv6:Conflicts:	apache1(ipv6)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -199,8 +201,8 @@ Apache web ·þÎñ³ÌÐò£¬ ²¢Îª Apache µÄ C ÓïÑÔ API Ìá¹©ÃæÏò¶ÔÏóµÄ Perl
 Summary:	Files needed for building XS modules that use mod_perl
 Summary(pl):	Pliki potrzebne do budowania modu³ów XS korzystaj±cych z mod_perla
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
 Requires:	apache1-devel
+Requires:	perl-mod_%{mod_name}1 = %{version}-%{release}
 
 %description devel
 The apache1-mod_perl-devel package contains the files needed for
@@ -209,6 +211,16 @@ building XS modules that use mod_perl.
 %description devel -l pl
 Ten pakiet zawiera pliki potrzebne do budowania modu³ów XS
 korzystaj±cych z mod_perla.
+
+%package -n perl-mod_%{mod_name}1
+Summary:	Perl APIs for mod_perl
+Group:		Development/Languages/Perl
+
+%description -n perl-mod_%{mod_name}1
+Perl APIs for mod_perl.
+
+%description -n perl-mod_%{mod_name}1 -l pl
+Perlowe API dla mod_perl.
 
 %prep
 %setup  -q -n mod_perl-%{version}
@@ -266,18 +278,20 @@ fi
 %triggerpostun -- apache1-mod_%{mod_name} < 1.29-7.1
 # check that they're not using old apache.conf
 if grep -q '^Include conf\.d' /etc/apache/apache.conf; then
-	sed -i -e '/^\(Add\|Load\)Module.*libperl\.\(so\|c\)/d' /etc/apache/apache.conf
+	%{__sed} -i -e '/^\(Add\|Load\)Module.*libperl\.\(so\|c\)/d' /etc/apache/apache.conf
 fi
 
 %files
 %defattr(644,root,root,755)
 %doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
-# FIXME: parent dirs not owned as the manualdocdir (via apache1-doc) is not in required
+# FIXME: parent dirs not owned as the manualdocdir (via apache1-doc) is not in deps
 %doc %{_manualdocdir}/mod/*html
 
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
 %attr(755,root,root) %{_pkglibdir}/*
 
+%files -n perl-mod_%{mod_name}1
+%defattr(644,root,root,755)
 %{perl_vendorarch}/*.pm
 %{perl_vendorarch}/*.PL
 
