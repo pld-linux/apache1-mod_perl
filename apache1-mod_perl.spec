@@ -214,6 +214,7 @@ korzystaj±cych z mod_perla.
 
 %package -n perl-mod_%{mod_name}1
 Summary:	Perl APIs for mod_perl
+Summary(pl):	Perlowe API dla mod_perla
 Group:		Development/Languages/Perl
 
 %description -n perl-mod_%{mod_name}1
