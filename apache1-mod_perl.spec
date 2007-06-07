@@ -37,7 +37,7 @@ Patch0:		apache-perl-rh.patch
 Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
-BuildRequires:	%{apxs}
+BuildRequires:	apache1-apxs
 %{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
 BuildRequires:	apache1-devel >= 1.3.33-2
 BuildRequires:	perl-B-Graph
