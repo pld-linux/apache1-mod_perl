@@ -1,35 +1,25 @@
-diff -ur mod_perl-1.29.orig/Makefile.PL mod_perl-1.29/Makefile.PL
---- mod_perl-1.29.orig/Makefile.PL	2003-11-21 14:50:04.000000000 +0000
-+++ mod_perl-1.29/Makefile.PL	2003-11-21 15:32:07.000000000 +0000
-@@ -1420,16 +1420,16 @@
+--- mod_perl-1.30/Makefile.PL.orig	2007-11-04 18:50:38.513973519 +0100
++++ mod_perl-1.30/Makefile.PL	2007-11-04 18:54:54.052535832 +0100
+@@ -1458,16 +1458,16 @@
  	(cd ./apaci && $(MAKE) distclean)
  
  apxs_libperl:
--	(cd ./apaci && $(PERL5LIB) $(MAKE))
-+	(cd ./apaci && $(PERL5LIB) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
+-	(cd ./apaci && $(PERL5LIB_ENV) $(MAKE))
++	(cd ./apaci && $(PERL5LIB_ENV) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
  
  apxs_install: apxs_libperl
  	(cd ./apaci && $(MAKE) install;)
  
  apache_httpd: $(APACHE_SRC)/Makefile.tmpl
--	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)";)
-+	(cd $(APACHE_SRC) && $(PERL5LIB) $(SHRPENV) $(MAKE) CC="$(CC)" OPTIMIZE="$(OPTIMIZE)";)
+-	(cd $(APACHE_SRC) && $(PERL5LIB_ENV) $(SHRPENV) $(MAKE) CC="$(CC)";)
++	(cd $(APACHE_SRC) && $(PERL5LIB_ENV) $(SHRPENV) $(MAKE) CC="$(CC)" OPTIMIZE="$(OPTIMIZE)";)
  
  apaci_httpd: 
--	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE))
-+	(cd $(APACHE_ROOT) && $(PERL5LIB) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
+-	(cd $(APACHE_ROOT) && $(PERL5LIB_ENV) $(MAKE))
++	(cd $(APACHE_ROOT) && $(PERL5LIB_ENV) $(MAKE) OPTIMIZE="$(OPTIMIZE)")
  
  apaci_install: 
  	(cd $(APACHE_ROOT) && $(MAKE) install)
-@@ -1448,7 +1448,7 @@
- 	-e 's,^$(APACHE_SRC),,;' \
- 	-e 'system "echo src$$_ >> MANIFEST";' \
- 	-e '}' 
--	$(MAKE) dist
-+	$(MAKE) dist OPTIMIZE="$(OPTIMIZE)"
- 	$(RM_RF) src/include/
- 	$(RM) src/Makefile.config
- 	$(MV) MANIFEST.orig MANIFEST
 diff -ur mod_perl-1.29.orig/apaci/Makefile.tmpl mod_perl-1.29/apaci/Makefile.tmpl
 --- mod_perl-1.29.orig/apaci/Makefile.tmpl	2001-02-11 15:33:12.000000000 +0000
 +++ mod_perl-1.29/apaci/Makefile.tmpl	2003-11-21 15:23:36.000000000 +0000
