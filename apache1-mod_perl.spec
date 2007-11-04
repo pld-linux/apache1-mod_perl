@@ -1,7 +1,6 @@
-# TODO:
-# - orphaned dirs for %{_manualdocdir}/mod/*html
 #
-%bcond_without	ipv6		# disable IPv6 support. must match same bcond from apache1-devel
+# Conditional build:
+%bcond_without	ipv6	# IPv6 support (must match same bcond from apache1-devel)
 #
 %include	/usr/lib/rpm/macros.perl
 %define		mod_name	perl
@@ -26,20 +25,19 @@ Summary(sv.UTF-8):	En inbyggd Perl-interpretator för webbservern Apache
 Summary(uk.UTF-8):	Модуль вбудовування інтерпретатора Perl в сервер Apache
 Summary(zh_CN.UTF-8):	用于 Apache web 服务程序的 Perl 解释程序。
 Name:		apache1-mod_perl
-Version:	1.29
-Release:	14
-License:	GPL
+Version:	1.30
+Release:	1
+License:	Apache v1.1
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
-# Source0-md5:	1491931790509b9af06fc037d02b0e7a
+# Source0-md5:	bfd6f6cff1ab1cc3dbb58a236701d169
 Patch0:		apache-perl-rh.patch
 # from ftp://ftp.kddlabs.co.jp/Linux/packages/Kondara/pub/Jirai/
 Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
 URL:		http://perl.apache.org/
-BuildRequires:	apache1-apxs
 %{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
-BuildRequires:	apache1-devel >= 1.3.33-2
+BuildRequires:	apache1-devel >= 1.3.39-2
 BuildRequires:	perl-B-Graph
 BuildRequires:	perl-BSD-Resource
 BuildRequires:	perl-Devel-Symdump
@@ -56,8 +54,6 @@ Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERS
 Provides:	apache(mod_perl)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
-# older apache1-mod_perl could make bad autodeps to perl-mod_perl1
-BuildConflicts:	apache1-mod_perl < 1.29-12.1
 %{!?with_ipv6:Conflicts:	apache1(ipv6)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -196,34 +192,47 @@ Apache web 服务程序， 并为 Apache 的 C 语言 API 提供面向对象的 
 接口。 由于不必启动任何外部 Perl 解释程序，因此会使 CGI
 脚本回转过程更为快速。
 
-%package devel
-Summary:	Files needed for building XS modules that use mod_perl
-Summary(pl.UTF-8):	Pliki potrzebne do budowania modułów XS korzystających z mod_perla
-Group:		Development/Libraries
-Requires:	apache1-devel
-Requires:	perl-mod_%{mod_name}1 = %{version}-%{release}
-
-%description devel
-The apache1-mod_perl-devel package contains the files needed for
-building XS modules that use mod_perl.
-
-%description devel -l pl.UTF-8
-Ten pakiet zawiera pliki potrzebne do budowania modułów XS
-korzystających z mod_perla.
-
-%package -n perl-mod_%{mod_name}1
+%package -n perl-mod_perl1
 Summary:	Perl APIs for mod_perl
 Summary(pl.UTF-8):	Perlowe API dla mod_perla
 Group:		Development/Languages/Perl
 
-%description -n perl-mod_%{mod_name}1
+%description -n perl-mod_perl1
 Perl APIs for mod_perl.
 
-%description -n perl-mod_%{mod_name}1 -l pl.UTF-8
+%description -n perl-mod_perl1 -l pl.UTF-8
 Perlowe API dla mod_perl.
 
+%package -n perl-mod_perl1-devel
+Summary:	Files needed for building XS modules that use mod_perl
+Summary(pl.UTF-8):	Pliki potrzebne do budowania modułów XS korzystających z mod_perla
+Group:		Development/Libraries
+Requires:	apache1-devel
+Requires:	perl-mod_perl1 = %{version}-%{release}
+Obsoletes:	apache1-mod_perl-devel
+
+%description -n perl-mod_perl1-devel
+The apache1-mod_perl-devel package contains the files needed for
+building XS modules that use mod_perl.
+
+%description -n perl-mod_perl1-devel -l pl.UTF-8
+Ten pakiet zawiera pliki potrzebne do budowania modułów XS
+korzystających z mod_perla.
+
+%package doc
+Summary:	mod_perl documentation
+Summary(pl.UTF_8):	Dokumentacja do mod_perla
+Group:		Documentation
+Requires:	apache1-doc
+
+%description doc
+mod_perl online documentation.
+
+%description doc -l pl.UTF-8
+Dokumentacja do mod_perla dostępna przez Apache'a.
+
 %prep
-%setup  -q -n mod_perl-%{version}
+%setup -q -n mod_perl-%{version}
 %patch0 -p1
 %{?with_ipv6:%patch1 -p1}
 %patch2 -p1
@@ -283,31 +292,34 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README INSTALL CREDITS faq/*.html faq/*.txt apache-modlist.html eg
-# FIXME: parent dirs not owned as the manualdocdir (via apache1-doc) is not in deps
-%doc %{_manualdocdir}/mod/*html
-
+%doc CREDITS Changes INSTALL LICENSE README STATUS SUPPORT faq/*.html faq/*.txt apache-modlist.html eg
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/conf.d/*_mod_%{mod_name}.conf
-%attr(755,root,root) %{_pkglibdir}/*
+%attr(755,root,root) %{_pkglibdir}/libperl.so
 
-%files -n perl-mod_%{mod_name}1
+%files doc
 %defattr(644,root,root,755)
-%{perl_vendorarch}/*.pm
-%{perl_vendorarch}/*.PL
+%{_manualdocdir}/mod/mod_perl.html
 
+%files -n perl-mod_perl1
+%defattr(644,root,root,755)
+%{perl_vendorarch}/Apache.pm
+%{perl_vendorarch}/mod_perl*.pm
+%{perl_vendorarch}/mod_perl_hooks.pm.PL
 %dir %{perl_vendorarch}/Apache
 %{perl_vendorarch}/Apache/*.pm
 %{perl_vendorarch}/Apache/Constants
 %dir %{perl_vendorarch}/auto/Apache
 %dir %{perl_vendorarch}/auto/Apache/Leak
+%{perl_vendorarch}/auto/Apache/Leak/Leak.bs
+%attr(755,root,root) %{perl_vendorarch}/auto/Apache/Leak/Leak.so
 %dir %{perl_vendorarch}/auto/Apache/Symbol
+%{perl_vendorarch}/auto/Apache/Symbol/Symbol.bs
+%attr(755,root,root) %{perl_vendorarch}/auto/Apache/Symbol/Symbol.so
+%{_mandir}/man3/Apache*.3pm*
+%{_mandir}/man3/cgi_to_mod_perl.3pm*
+%{_mandir}/man3/mod_perl*.3pm*
 
-%{perl_vendorarch}/auto/*/*/*.bs
-%attr(755,root,root) %{perl_vendorarch}/auto/*/*/*.so
-
-%{_mandir}/man3/[Acm]*
-
-%files devel
+%files -n perl-mod_perl1-devel
 %defattr(644,root,root,755)
 %{perl_vendorarch}/auto/Apache/typemap
 %{perl_vendorarch}/auto/Apache/mod_perl.exp
