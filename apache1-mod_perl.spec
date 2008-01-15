@@ -1,4 +1,9 @@
-#
+# TODO
+# - hard to solve and is it worth?
+#   Apache::Util::escape_html() can't be used outside Aapache it is xs and in shared library which is also the apache module
+#   fix would be probably link only Apachye symbols to apache module and put rest of the symbols as perl library
+#   perl-HTML-Menu-Select uses that method in test.
+# 
 # Conditional build:
 %bcond_without	ipv6	# IPv6 support (must match same bcond from apache1-devel)
 #
