@@ -31,7 +31,7 @@ Summary(uk.UTF-8):	Модуль вбудовування інтерпретат�
 Summary(zh_CN.UTF-8):	用于 Apache web 服务程序的 Perl 解释程序。
 Name:		apache1-mod_perl
 Version:	1.30
-Release:	1
+Release:	2
 License:	Apache v1.1
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -40,6 +40,7 @@ Patch0:		apache-perl-rh.patch
 # from ftp://ftp.kddlabs.co.jp/Linux/packages/Kondara/pub/Jirai/
 Patch1:		mod_perl-v6.patch
 Patch2:		%{name}-optimize.patch
+Patch3:		%{name}-perl510.patch
 URL:		http://perl.apache.org/
 %{?with_ipv6:BuildRequires:	apache1(ipv6)-devel}
 BuildRequires:	apache1-devel >= 1.3.39-2
@@ -241,6 +242,7 @@ Dokumentacja do mod_perla dostępna przez Apache'a.
 %patch0 -p1
 %{?with_ipv6:%patch1 -p1}
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__perl} Makefile.PL \
