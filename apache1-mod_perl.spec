@@ -31,7 +31,7 @@ Summary(uk.UTF-8):	Модуль вбудовування інтерпретат�
 Summary(zh_CN.UTF-8):	用于 Apache web 服务程序的 Perl 解释程序。
 Name:		apache1-mod_perl
 Version:	1.30
-Release:	2
+Release:	3
 License:	Apache v1.1
 Group:		Networking/Daemons
 Source0:	http://perl.apache.org/dist/mod_perl-%{version}.tar.gz
@@ -56,7 +56,6 @@ BuildRequires:	rpm-perlprov >= 4.1-13
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(triggerpostun):	sed >= 4.0
 Requires:	apache1(EAPI)
-Requires:	perl(DynaLoader) = %(%{__perl} -MDynaLoader -e 'print DynaLoader->VERSION')
 Provides:	apache(mod_perl)
 Obsoletes:	mod_perl
 Obsoletes:	mod_perl-common
