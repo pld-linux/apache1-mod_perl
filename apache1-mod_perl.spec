@@ -226,7 +226,7 @@ korzystających z mod_perla.
 
 %package doc
 Summary:	mod_perl documentation
-Summary(pl.UTF_8):	Dokumentacja do mod_perla
+Summary(pl.UTF-8):	Dokumentacja do mod_perla
 Group:		Documentation
 Requires:	apache1-doc
 
