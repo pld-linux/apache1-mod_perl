@@ -1,0 +1,7 @@
+- fix mod_perl.html document location
+- remove Provides: mod_perl (no PLD package uses it)
+- drop Obsoletes: perl-Apache-Test as it's not clear why it's needed
+  and it causes apache2 mod_perl being obsoleted with each this
+  mod_perl package upgrade
+- fix (activate) apache ipv6 dep
+- please test
