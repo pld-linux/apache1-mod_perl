@@ -1,0 +1,5 @@
+- added apache(EAPI) to Prereq,
+- added apache(EAPI)-devel to BuildRequires,
+- use more macros,
+- remove pod documentations,
+- few celanups.
