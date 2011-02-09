@@ -309,7 +309,6 @@ fi
 %{perl_vendorarch}/Apache.pm
 %{perl_vendorarch}/mod_perl*.pm
 %{perl_vendorarch}/mod_perl_hooks.pm.PL
-%dir %{perl_vendorarch}/Apache
 %{perl_vendorarch}/Apache/*.pm
 %{perl_vendorarch}/Apache/Constants
 %dir %{perl_vendorarch}/auto/Apache
