@@ -7,7 +7,6 @@
 # Conditional build:
 %bcond_without	ipv6	# IPv6 support (must match same bcond from apache1-devel)
 #
-%include	/usr/lib/rpm/macros.perl
 %define		mod_name	perl
 %define 	apxs	/usr/sbin/apxs1
 Summary:	A Perl interpreter for the Apache Web server
